@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +10,9 @@
         width: 500px;
         height: 700px;
         border: 1px solid black;
+      }
+      .firstRow {
+        display: flex;
       }
       .cal_yoil,
       .cal_body {
@@ -21,7 +24,12 @@
   <body>
     <div class="calendar">
       <div class="cal_header">
-        <div id="calHead"></div>
+        <div class="firstRow">
+          <button class="leftButton" id="previousMonth">◀</button>
+          <div id="yearMonth"></div>
+          <button class="rightButton" id="nextMonth">▶</button>
+        </div>
+
         <div class="cal_yoil">
           <div>일</div>
           <div>월</div>
@@ -34,29 +42,29 @@
       </div>
       <div class="cal_body" id="calBody"></div>
     </div>
+
     <script>
-      const calHead = document.getElementById("calHead");
+      const yearMonth = document.getElementById("yearMonth");
       const calBody = document.getElementById("calBody");
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const yoil = date.getDay();
+      const previousBtn = document.getElementById("previousMonth");
+      const nextBtn = document.getElementById("nextMonth");
+
       function max_day() {
         let maxDay = 30;
-        if (month === 2) {
+        if (this.month === 2) {
           if (year % 4 === 0) {
             maxDay = 29;
           } else {
             maxDay = 28;
           }
         } else if (
-          month === 1 ||
-          month === 3 ||
-          month === 5 ||
-          month === 7 ||
-          month === 8 ||
-          month === 10 ||
-          month === 12
+          this.month === 1 ||
+          this.month === 3 ||
+          this.month === 5 ||
+          this.month === 7 ||
+          this.month === 8 ||
+          this.month === 10 ||
+          this.month === 12
         ) {
           maxDay = 31;
         }
@@ -64,6 +72,12 @@
       }
 
       function makeCalender() {
+        let date = new Date();
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let yoil = date.getDay();
+
         const tempDate = new Date(year, month - 1, 1);
         const tempyoil = tempDate.getDay();
         let html = "";
@@ -75,11 +89,11 @@
         }
 
         calBody.innerHTML = html;
+        yearMonth.innerHTML = `${year} ${month}`;
       }
 
       function init() {
         makeCalender();
-        calHead.innerHTML = `${year} ${month}`;
       }
       init();
     </script>
