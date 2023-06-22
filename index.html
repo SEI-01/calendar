@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>calendar</title>
+    <style>
+      .calendar {
+        width: 500px;
+        height: 700px;
+        border: 1px solid black;
+      }
+      .cal_yoil,
+      .cal_body {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calendar">
+      <div class="cal_header">
+        <div id="calHead"></div>
+        <div class="cal_yoil">
+          <div>일</div>
+          <div>월</div>
+          <div>화</div>
+          <div>수</div>
+          <div>목</div>
+          <div>금</div>
+          <div>토</div>
+        </div>
+      </div>
+      <div class="cal_body" id="calBody"></div>
+    </div>
+    <script>
+      const calHead = document.getElementById("calHead");
+      const calBody = document.getElementById("calBody");
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const yoil = date.getDay();
+      function max_day() {
+        let maxDay = 30;
+        if (month === 2) {
+          if (year % 4 === 0) {
+            maxDay = 29;
+          } else {
+            maxDay = 28;
+          }
+        } else if (
+          month === 1 ||
+          month === 3 ||
+          month === 5 ||
+          month === 7 ||
+          month === 8 ||
+          month === 10 ||
+          month === 12
+        ) {
+          maxDay = 31;
+        }
+        return maxDay;
+      }
+
+      function makeCalender() {
+        const tempDate = new Date(year, month - 1, 1);
+        const tempyoil = tempDate.getDay();
+        let html = "";
+        for (let i = 1; i < tempyoil + 1; i++) {
+          html = html + `<div></div>`;
+        }
+        for (let i = 1; i < max_day() + 1; i++) {
+          html = html + `<div>${i}</div>`;
+        }
+
+        calBody.innerHTML = html;
+      }
+
+      function init() {
+        makeCalender();
+        calHead.innerHTML = `${year} ${month}`;
+      }
+      init();
+    </script>
+  </body>
+</html>
