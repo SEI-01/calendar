@@ -71,8 +71,7 @@
         return maxDay;
       }
 
-      function makeCalender() {
-        let date = new Date();
+      function makeCalender(date) {
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
         let day = date.getDate();
@@ -92,8 +91,23 @@
         yearMonth.innerHTML = `${year} ${month}`;
       }
 
+      function previousMonth(date) {
+        console.log("previousbtn");
+      }
+
+      function nextMonth() {
+        console.log("nextbtn");
+      }
+
       function init() {
-        makeCalender();
+        let date = new Date();
+        makeCalender(date);
+        previousBtn.addEventListener("click", () => {
+          previousMonth(date);
+        });
+        nextBtn.addEventListener("click", () => {
+          nextMonth(date);
+        });
       }
       init();
     </script>
