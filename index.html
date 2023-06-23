@@ -6,18 +6,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>calendar</title>
     <style>
+      body {
+        font-family: "Questrial", sans-serif;
+      }
+      button {
+        all: unset;
+      }
       .calendar {
-        width: 500px;
-        height: 700px;
+        width: 350px;
+        height: 380px;
         border: 1px solid black;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
       }
       .firstRow {
         display: flex;
+        height: 40px;
+        align-items: center;
+      }
+
+      #yearMonth {
+        display: flex;
+        justify-content: center;
+        width: 65px;
+        font-weight: 600;
+      }
+
+      .leftButton,
+      .rightButton,
+      .todayButton {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        font-weight: 900;
+        &:hover {
+          background: #eee;
+        }
+
+        &.leftButton {
+          margin-right: 70px;
+        }
+        &.rightButton {
+          margin-left: 70px;
+        }
+
+        &.todayButton {
+          width: 70px;
+          height: 30px;
+          margin: 0px;
+        }
+      }
+
+      .cal_yoil {
+        color: #999;
+        font-weight: 600;
+      }
+      .dateItem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
       }
       .cal_yoil,
       .cal_body {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
+      }
+      .yoilBox,
+      .dateBox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+      }
+      .yoilBox {
+        width: 50px;
+        height: 20px;
+      }
+      .dateBox {
+        cursor: default;
+        border-radius: 40px;
+
+        transition-duration: 0.2s;
+        &:hover {
+          background: #eee;
+        }
+
+        &:focus {
+          background: #f5d042;
+          color: white;
+          font-weight: 600;
+        }
+      }
+      .previousDate,
+      .nextDate {
+        color: rgba(0, 0, 0, 0.3);
       }
     </style>
   </head>
@@ -25,19 +117,24 @@
     <div class="calendar">
       <div class="cal_header">
         <div class="firstRow">
-          <button class="leftButton" id="previousMonth">◀</button>
+          <button class="leftButton" id="previousMonth" style="cursor: pointer">
+            &#60;
+          </button>
           <div id="yearMonth"></div>
-          <button class="rightButton" id="nextMonth">▶</button>
+          <button class="rightButton" id="nextMonth" style="cursor: pointer">
+            &#62;
+          </button>
+          <button class="todayButton" id="todayBtn">Today</button>
         </div>
 
         <div class="cal_yoil">
-          <div>일</div>
-          <div>월</div>
-          <div>화</div>
-          <div>수</div>
-          <div>목</div>
-          <div>금</div>
-          <div>토</div>
+          <span class="yoilBox">Sun</span>
+          <span class="yoilBox">Mon</span>
+          <span class="yoilBox">Tue</span>
+          <span class="yoilBox">Wed</span>
+          <span class="yoilBox">Thu</span>
+          <span class="yoilBox">Fri</span>
+          <span class="yoilBox">Sat</span>
         </div>
       </div>
       <div class="cal_body" id="calBody"></div>
@@ -48,66 +145,124 @@
       const calBody = document.getElementById("calBody");
       const previousBtn = document.getElementById("previousMonth");
       const nextBtn = document.getElementById("nextMonth");
+      const todayBtn = document.getElementById("todayBtn");
 
-      function max_day() {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+
+      function max_day(year, month) {
         let maxDay = 30;
-        if (this.month === 2) {
+        if (month === 2) {
           if (year % 4 === 0) {
             maxDay = 29;
           } else {
             maxDay = 28;
           }
         } else if (
-          this.month === 1 ||
-          this.month === 3 ||
-          this.month === 5 ||
-          this.month === 7 ||
-          this.month === 8 ||
-          this.month === 10 ||
-          this.month === 12
+          month === 1 ||
+          month === 3 ||
+          month === 5 ||
+          month === 7 ||
+          month === 8 ||
+          month === 10 ||
+          month === 12
         ) {
           maxDay = 31;
         }
         return maxDay;
       }
 
-      function makeCalender(date) {
-        let year = date.getFullYear();
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        let yoil = date.getDay();
+      function makeCalendar(year, month) {
+        const nowDate = new Date(year, month - 1, 1);
+        const nowYoil = nowDate.getDay();
 
-        const tempDate = new Date(year, month - 1, 1);
-        const tempyoil = tempDate.getDay();
-        let html = "";
-        for (let i = 1; i < tempyoil + 1; i++) {
-          html = html + `<div></div>`;
+        let previousDate, nextDate;
+
+        if (month === 1) {
+          previousDate = new Date(year - 1, 11, 1);
+        } else {
+          previousDate = new Date(year, month - 2, 1);
         }
-        for (let i = 1; i < max_day() + 1; i++) {
-          html = html + `<div>${i}</div>`;
+        if (month === 12) {
+          nextDate = new Date(year + 1, 0, 1);
+        } else {
+          nextDate = new Date(year, month, 1);
+        }
+
+        const py = previousDate.getFullYear();
+        const pm = previousDate.getMonth() + 1;
+        const ny = nextDate.getFullYear();
+        const nm = nextDate.getMonth() + 1;
+        let previousMaxDay = max_day(py, pm);
+
+        let html = "";
+        for (let i = 1; i < nowYoil + 1; i++) {
+          html =
+            html +
+            `<div class="dateItem"><span class="previousDate dateBox">${
+              previousMaxDay - nowYoil + i
+            }</span></div>`;
+        }
+        for (let i = 1; i < max_day(year, month) + 1; i++) {
+          html =
+            html +
+            `<div class="dateItem"><button class="dateBox">${i}</button></div>`;
+        }
+
+        const count = html.split("</div>").length - 1;
+
+        if (count > 28 && count < 35) {
+          for (let i = 1; i < 35 + 1 - count; i++) {
+            html =
+              html +
+              `<div class="dateItem"><span class="nextDate dateBox">${i}</span></div>`;
+          }
+        } else if (count > 35 && count < 42) {
+          for (let i = 1; i < 42 + 1 - count; i++) {
+            html =
+              html +
+              `<div class="dateItem"><span class="nextDate dateBox">${i}</span></div>`;
+          }
         }
 
         calBody.innerHTML = html;
         yearMonth.innerHTML = `${year} ${month}`;
       }
 
-      function previousMonth(date) {
-        console.log("previousbtn");
+      function previousMonth() {
+        if (month === 1) {
+          year = year - 1;
+          month = 12;
+        } else {
+          month = month - 1;
+        }
+        makeCalendar(year, month);
       }
 
       function nextMonth() {
-        console.log("nextbtn");
+        if (month === 12) {
+          year = year + 1;
+          month = 1;
+        } else {
+          month = month + 1;
+        }
+        makeCalendar(year, month);
+      }
+
+      function today() {
+        const todayDate = new Date();
+        year = todayDate.getFullYear();
+        month = todayDate.getMonth() + 1;
+
+        makeCalendar(year, month);
       }
 
       function init() {
-        let date = new Date();
-        makeCalender(date);
-        previousBtn.addEventListener("click", () => {
-          previousMonth(date);
-        });
-        nextBtn.addEventListener("click", () => {
-          nextMonth(date);
-        });
+        makeCalendar(year, month);
+        previousBtn.addEventListener("click", previousMonth);
+        nextBtn.addEventListener("click", nextMonth);
+        todayBtn.addEventListener("click", today);
       }
       init();
     </script>
