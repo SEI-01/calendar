@@ -8,65 +8,83 @@
     <style>
       body {
         font-family: "Questrial", sans-serif;
+        background-color: rgb(53, 54, 58);
       }
       button {
         all: unset;
       }
       .calendar {
-        width: 350px;
-        height: 380px;
-        border: 1px solid black;
+        background-color: rgb(69, 70, 80);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 360px;
+        margin: 0;
         border: 1px solid rgba(0, 0, 0, 0.2);
         box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
           0 1px 3px rgba(0, 0, 0, 0.08);
         border-radius: 10px;
+        transition: transform 0.3s;
+      }
+      .calendar.test {
+        transform: translate(-360px, 0px);
+        transition: transform 0.3s;
+        &:hover {
+          transform: translate(-350px, 0px);
+        }
+      }
+      .calendar_wrapper {
+        width: 350px;
+      }
+      .cal_header {
+        margin-bottom: 5px;
       }
       .firstRow {
         display: flex;
         height: 40px;
         align-items: center;
+        margin-top: 5px;
       }
-
-      #yearMonth {
-        display: flex;
-        justify-content: center;
-        width: 65px;
-        font-weight: 600;
-      }
-
-      .leftButton,
-      .rightButton,
-      .todayButton {
+      .previousMonthBtn,
+      .nextMonthBtn,
+      .todayBtn {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 30px;
         height: 30px;
         border-radius: 30px;
-        font-weight: 900;
+        font-weight: 400;
         &:hover {
-          background: #eee;
+          background: rgba(0, 0, 0, 0.2);
         }
 
-        &.leftButton {
+        &.previousMonthBtn {
           margin-right: 70px;
+          margin-left: 3px;
         }
-        &.rightButton {
+        &.nextMonthBtn {
           margin-left: 70px;
         }
 
-        &.todayButton {
-          width: 70px;
-          height: 30px;
-          margin: 0px;
+        &.todayBtn {
+          padding: 5px;
+          margin-left: 3px;
         }
       }
 
-      .cal_yoil {
-        color: #999;
-        font-weight: 600;
+      .calendar_title {
+        color: white;
+        display: flex;
+        justify-content: center;
+        width: 100px;
+        font-weight: 700;
+        font-size: 14px;
       }
+
       .dateItem {
+        color: white;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -78,6 +96,15 @@
       .cal_body {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
+
+        &.cal_yoil {
+          color: #999;
+          font-weight: 600;
+        }
+
+        &.cal_body {
+          margin-bottom: 5px;
+        }
       }
       .yoilBox,
       .dateBox {
@@ -87,22 +114,24 @@
         justify-content: center;
         width: 45px;
         height: 45px;
+
+        &.yoilBox {
+          width: 50px;
+          height: 20px;
+        }
       }
-      .yoilBox {
-        width: 50px;
-        height: 20px;
-      }
+
       .dateBox {
         cursor: default;
         border-radius: 40px;
 
         transition-duration: 0.2s;
         &:hover {
-          background: #eee;
+          background: rgba(0, 0, 0, 0.2);
         }
 
         &:focus {
-          background: #f5d042;
+          background: rgb(210, 157, 223);
           color: white;
           font-weight: 600;
         }
@@ -111,34 +140,67 @@
       .nextDate {
         color: rgba(0, 0, 0, 0.3);
       }
+
+      .calendar_schedule {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 360px;
+        height: 100px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
     <div class="calendar">
-      <div class="cal_header">
-        <div class="firstRow">
-          <button class="leftButton" id="previousMonth" style="cursor: pointer">
-            &#60;
-          </button>
-          <div id="yearMonth"></div>
-          <button class="rightButton" id="nextMonth" style="cursor: pointer">
-            &#62;
-          </button>
-          <button class="todayButton" id="todayBtn">Today</button>
-        </div>
+      <div class="calendar_wrapper">
+        <div class="cal_header">
+          <div class="firstRow">
+            <button class="previousMonthBtn" id="previousMonth">&#60;</button>
+            <div class="calendar_title" id="yearMonth"></div>
+            <button class="nextMonthBtn" id="nextMonth">&#62;</button>
+            <button class="todayBtn" id="todayBtn">
+              <img
+                src="./source/today.png"
+                alt="Today"
+                style="width: 20px; height: 20px"
+              />
+            </button>
+          </div>
 
-        <div class="cal_yoil">
-          <span class="yoilBox">Sun</span>
-          <span class="yoilBox">Mon</span>
-          <span class="yoilBox">Tue</span>
-          <span class="yoilBox">Wed</span>
-          <span class="yoilBox">Thu</span>
-          <span class="yoilBox">Fri</span>
-          <span class="yoilBox">Sat</span>
+          <div class="cal_yoil">
+            <span class="yoilBox">Sun</span>
+            <span class="yoilBox">Mon</span>
+            <span class="yoilBox">Tue</span>
+            <span class="yoilBox">Wed</span>
+            <span class="yoilBox">Thu</span>
+            <span class="yoilBox">Fri</span>
+            <span class="yoilBox">Sat</span>
+          </div>
         </div>
+        <div class="cal_body" id="calBody"></div>
       </div>
-      <div class="cal_body" id="calBody"></div>
     </div>
+    <div class="calendar_schedule">
+      <div id="sch_date"></div>
+      <div class="sch_wrapper">
+        <div class="">1</div>
+        <div class="">2</div>
+      </div>
+      <div class="sch_input_form">
+        <input type="text" />
+        <button>입력</button>
+      </div>
+    </div>
+    <div
+      class="aniBtn"
+      style="background-color: aliceblue; width: 30px; height: 30px"
+    ></div>
 
     <script>
       const yearMonth = document.getElementById("yearMonth");
@@ -207,7 +269,7 @@
         for (let i = 1; i < max_day(year, month) + 1; i++) {
           html =
             html +
-            `<div class="dateItem"><button class="dateBox">${i}</button></div>`;
+            `<div class="dateItem"><button class="nowDate dateBox" id="${year}_${month}_${i}">${i}</button></div>`;
         }
 
         const count = html.split("</div>").length - 1;
@@ -227,7 +289,17 @@
         }
 
         calBody.innerHTML = html;
-        yearMonth.innerHTML = `${year} ${month}`;
+        yearMonth.innerHTML = `${year}年 ${month}月`;
+
+        let childrens = document.querySelectorAll(".nowDate");
+        childrens.forEach((item) => {
+          item.addEventListener("focus", () => {
+            schedule(item);
+          });
+          item.addEventListener("blur", () => {
+            // console.log(item.id + "off");
+          });
+        });
       }
 
       function previousMonth() {
@@ -254,15 +326,30 @@
         const todayDate = new Date();
         year = todayDate.getFullYear();
         month = todayDate.getMonth() + 1;
+        date = todayDate.getDate();
 
         makeCalendar(year, month);
+        document.getElementById(`${year}_${month}_${date}`).focus();
+      }
+
+      function schedule(item) {
+        data = item.id.split("_");
+        const sch_year = data[0];
+        const sch_month = data[1];
+        const sch_date = data[2];
+
+        document.getElementById("sch_date").innerHTML =
+          sch_year + " " + sch_month + " " + sch_date;
       }
 
       function init() {
-        makeCalendar(year, month);
+        today();
         previousBtn.addEventListener("click", previousMonth);
         nextBtn.addEventListener("click", nextMonth);
         todayBtn.addEventListener("click", today);
+        document.querySelector(".aniBtn").addEventListener("click", () => {
+          document.querySelector(".calendar").classList.toggle("test");
+        });
       }
       init();
     </script>
